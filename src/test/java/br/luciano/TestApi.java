@@ -10,8 +10,6 @@ import org.junit.Test;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import io.restassured.response.Validatable;
-import io.restassured.response.ValidatableResponse;
 
 public class TestApi extends MassaDeDados {
 	
