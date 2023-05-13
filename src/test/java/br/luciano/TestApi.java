@@ -53,8 +53,10 @@ public class TestApi extends MassaDeDados {
 		response.then()
 			.log().all()
 			.body("id", containsString("0XYvRd7oD"))
-			.body(containsString("abys"))
 			.statusCode(200);
+		
+		String breedsId = response.jsonPath().getString("breeds.id");
+		Assert.assertEquals("[abys]", breedsId);
 		
 		System.out.println("breeds.id => " + response.jsonPath().getString("breeds.id"));
 	}
