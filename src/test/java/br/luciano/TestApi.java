@@ -9,13 +9,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 public class TestApi extends MassaDeDados {
 	
 	@BeforeClass
 	public static void urlBase() {
-		RestAssured.baseURI = "https://api.thecatapi.com/v1/";
+		RestAssured.baseURI = "https://api.thecatapi.com/v1";
 	}
 	
 	public void validacao(Response response, int statusCode) {
@@ -32,7 +33,7 @@ public class TestApi extends MassaDeDados {
 			.headers("x-api-key", apiKey)
 			.body(bodyCadastro)
 		.when()
-			.post("user/passwordlesssignup");
+			.post("/user/passwordlesssignup");
 		
 		response.then()
 			.statusCode(400);
@@ -42,18 +43,20 @@ public class TestApi extends MassaDeDados {
 	
 	@Test
 	public void getImage() {
-		
-		Response response =
+		RestAssured.basePath = "/images/0XYvRd7oD";
+		Response response = 
 		given()
-			.contentType("application/json")
+			.contentType(ContentType.JSON)
 		.when()
-				.get("images/0XYvRd7oD");
+				.get();
 		
 		response.then()
+			.log().all()
 			.body("id", containsString("0XYvRd7oD"))
+			.body(containsString("abys"))
 			.statusCode(200);
 		
-		System.out.println("retorno => " + response.body().asPrettyString());
+		System.out.println("breeds.id => " + response.jsonPath().getString("breeds.id"));
 	}
 	
 	@Test
@@ -64,7 +67,7 @@ public class TestApi extends MassaDeDados {
 					.headers("x-api-key", apiKey)
 					.body(bodyVotes)
 				.when()
-					.post("votes/");
+					.post("/votes/");
 		
 		validacao(response,201);
 		
@@ -80,7 +83,7 @@ public class TestApi extends MassaDeDados {
 					.headers("x-api-key", apiKey)
 					.body(bodyDeleteVotes)
 				.when()
-					.post("votes/");
+					.post("/votes/");
 		
 		response.then()
 			.body("message", containsString("SUCCESS"))
@@ -105,7 +108,7 @@ public class TestApi extends MassaDeDados {
 					.header("x-api-key", apiKey)
 					.body(bodyFavourite)
 				.when()
-					.post("favourites/");
+					.post("/favourites/");
 		validacao(response,200);
 		
 		return response.jsonPath().getString("id");
@@ -118,7 +121,7 @@ public class TestApi extends MassaDeDados {
 					.header("x-api-key", apiKey)
 					.pathParam("favouriteId", id)
 				.when()
-					.delete("favourites/{favouriteId}");
+					.delete("/favourites/{favouriteId}");
 		validacao(response,200);
 		
 		return response.jsonPath().getString("message").equals("SUCCESS");
